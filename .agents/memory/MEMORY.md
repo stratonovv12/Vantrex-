@@ -1,0 +1,2 @@
+- [VANTREX clean-start catalogue](vantrex-build.md) — keep platforms and games empty until the restricted admin adds them.
+- [VANTREX authentication](vantrex-build.md) — use managed Clerk auth and keep admin access tied to the operations email.

@@ -358,6 +358,14 @@ export async function customFetch<T = unknown>(
     }
   }
 
+  if (
+    typeof localStorage !== "undefined" &&
+    !headers.has("x-vantrex-email")
+  ) {
+    const vantrexEmail = localStorage.getItem("vantrex-email");
+    if (vantrexEmail) headers.set("x-vantrex-email", vantrexEmail);
+  }
+
   const requestInfo = { method, url: resolveUrl(input) };
 
   const response = await fetch(input, { ...init, method, headers });

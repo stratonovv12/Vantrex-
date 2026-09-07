@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "VANTREX"
+description = "A mobile-first iGaming showcase and affiliate platform with admin-managed platforms and games, user onboarding, referral progression, hourly rewards, and crypto withdrawal requests."
+version = "1.0.0"
+id = "artifacts/vantrex"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24634
+
+[services.development]
+run = "pnpm --filter @workspace/vantrex run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vantrex", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/vantrex/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24634"
+BASE_PATH = "/"

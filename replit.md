@@ -1,6 +1,6 @@
-# [Project name]
+# VANTREX
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+VANTREX is a monochrome iGaming showcase and affiliate cockpit with Clerk authentication, admin-managed partner catalogues, referral progression, hourly rewards, and USDT payout requests.
 
 ## Run & Operate
 
@@ -22,15 +22,26 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/vantrex/src/App.tsx` — authenticated player, onboarding, profile, and admin routes.
+- `artifacts/vantrex/src/index.css` — monochrome VANTREX visual system and responsive layout.
+- `artifacts/api-server/src/routes/vantrex.ts` — authenticated platform, game, profile, and withdrawal endpoints.
+- `lib/api-spec/openapi.yaml` — source-of-truth API contract.
+- `lib/db/src/schema/vantrex.ts` — PostgreSQL schema for VANTREX records.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Clerk is the authentication provider so Google OAuth and email/password flows are managed securely outside the app.
+- The catalogue starts empty by design; platforms and games are only created through the restricted admin surface.
+- Uploaded image previews use native file inputs and object URLs; persistent storage should be moved to App Storage before production image uploads.
+- Affiliate destinations are stored server-side and only used as click targets from the Play now action.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Player landing page and Clerk sign-in/sign-up.
+- RU/EN onboarding with username availability and active platform selection.
+- Mobile-first dashboard with casino/sports tabs, referral tier progress, active hourly reward timer, and payout modal.
+- Profile editing with native avatar upload and referral code.
+- Restricted admin CRUD for platforms and games/bets plus withdrawal status management.
 
 ## User preferences
 
@@ -38,7 +49,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- `pnpm --filter @workspace/api-spec run codegen` must be run after OpenAPI changes.
+- `pnpm --filter @workspace/db run push` applies development schema changes; publishing handles production schema diffs.
+- Clerk browser development keys are expected in preview and are automatically separated from production after publish.
 
 ## Pointers
 
