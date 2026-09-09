@@ -306,26 +306,32 @@ components:
         - status
     Platform:
       type: object
-      required: [id, name, logoUrl, affiliateUrl]
+      required: [id, name, kind, logoUrl]
       properties:
         id: { type: string }
         name: { type: string }
+        kind:
+          type: string
+          enum: [casino, sports]
         logoUrl: { type: ["string", "null"] }
-        affiliateUrl: { type: string }
         createdAt: { type: string }
     PlatformInput:
       type: object
-      required: [name, affiliateUrl]
+      required: [name, kind]
       properties:
         name: { type: string, minLength: 1 }
+        kind:
+          type: string
+          enum: [casino, sports]
         logoUrl: { type: ["string", "null"] }
-        affiliateUrl: { type: string, minLength: 1 }
     PlatformUpdate:
       type: object
       properties:
         name: { type: string, minLength: 1 }
+        kind:
+          type: string
+          enum: [casino, sports]
         logoUrl: { type: ["string", "null"] }
-        affiliateUrl: { type: string, minLength: 1 }
     Game:
       type: object
       required: [id, platformId, title, description, imageUrl, affiliateUrl, kind]
@@ -365,7 +371,7 @@ components:
           enum: [casino, sports]
     Profile:
       type: object
-      required: [id, email, username, language, activePlatformId, referralCode, referralCount, balance, tier]
+      required: [id, email, username, language, activePlatformId, referralCode, referralCount, balance, tier, hourlyRate]
       properties:
         id: { type: string }
         email: { type: string }

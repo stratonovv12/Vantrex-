@@ -5,8 +5,8 @@ import { z } from "zod/v4";
 export const vantrexPlatformsTable = pgTable("vantrex_platforms", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
+  kind: text("kind").notNull(),
   logoUrl: text("logo_url"),
-  affiliateUrl: text("affiliate_url").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -23,12 +23,14 @@ export const vantrexGamesTable = pgTable("vantrex_games", {
 
 export const vantrexProfilesTable = pgTable("vantrex_profiles", {
   id: text("id").primaryKey(),
+  clerkUserId: text("clerk_user_id").unique(),
   email: text("email").notNull().unique(),
   username: text("username").notNull().default(""),
   avatarUrl: text("avatar_url"),
   language: text("language").notNull().default("EN"),
   activePlatformId: text("active_platform_id"),
   referralCode: text("referral_code").notNull().unique(),
+  referredByCode: text("referred_by_code"),
   referralCount: integer("referral_count").notNull().default(0),
   balance: numeric("balance", { precision: 12, scale: 4 }).notNull().default("0"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

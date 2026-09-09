@@ -21,5 +21,5 @@ export interface Profile {
   referralCount: number;
   balance: number;
   tier: ProfileTier;
-  hourlyRate?: number;
+  hourlyRate: number;
 }

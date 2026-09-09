@@ -5,12 +5,13 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { PlatformKind } from './platformKind';
 
 export interface Platform {
   id: string;
   name: string;
+  kind: PlatformKind;
   /** @nullable */
   logoUrl: string | null;
-  affiliateUrl: string;
   createdAt?: string;
 }

@@ -1,6 +1,6 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { randomUUID } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { getAuth } from "@clerk/express";
 import { db } from "@workspace/db";
 import {
@@ -28,14 +28,31 @@ function profileEmail(req: Request) {
 }
 
 async function getOrCreateProfile(req: Request) {
+  const clerkUserId = getAuth(req).userId;
+  if (!clerkUserId) throw new Error("Authentication required");
   const email = profileEmail(req);
-  const existing = await db.select().from(vantrexProfilesTable).where(eq(vantrexProfilesTable.email, email)).limit(1);
-  if (existing[0]) return existing[0];
+  const existing = await db.select().from(vantrexProfilesTable).where(or(eq(vantrexProfilesTable.clerkUserId, clerkUserId), eq(vantrexProfilesTable.email, email))).limit(1);
+  if (existing[0]) {
+    if (!existing[0].clerkUserId) {
+      const linked = await db.update(vantrexProfilesTable).set({ clerkUserId }).where(eq(vantrexProfilesTable.id, existing[0].id)).returning();
+      return linked[0];
+    }
+    return existing[0];
+  }
+  const referredByCode = typeof req.query.ref === "string" ? req.query.ref : null;
   const created = await db.insert(vantrexProfilesTable).values({
     id: randomUUID(),
+    clerkUserId,
     email,
     referralCode: `VTX-${randomUUID().slice(0, 8).toUpperCase()}`,
+    referredByCode,
   }).returning();
+  if (referredByCode) {
+    const inviter = await db.select({ id: vantrexProfilesTable.id }).from(vantrexProfilesTable).where(eq(vantrexProfilesTable.referralCode, referredByCode)).limit(1);
+    if (inviter[0]) {
+      await db.update(vantrexProfilesTable).set({ referralCount: (await db.select({ count: vantrexProfilesTable.referralCount }).from(vantrexProfilesTable).where(eq(vantrexProfilesTable.id, inviter[0].id)).limit(1))[0]?.count + 1 || 1 }).where(eq(vantrexProfilesTable.id, inviter[0].id));
+    }
+  }
   return created[0];
 }
 
@@ -74,13 +91,13 @@ router.get("/platforms", async (_req, res) => {
 router.post("/platforms", async (req, res) => {
   if (!adminOrForbidden(req, res)) return;
   const name = String(req.body.name ?? "").trim();
-  const affiliateUrl = String(req.body.affiliateUrl ?? "").trim();
-  if (!name || !affiliateUrl) {
-    res.status(400).json({ error: "Platform name and affiliate URL are required" });
+  const kind: CatalogKind = req.body.kind === "sports" ? "sports" : "casino";
+  if (!name) {
+    res.status(400).json({ error: "Platform name is required" });
     return;
   }
   const created = await db.insert(vantrexPlatformsTable).values({
-    id: randomUUID(), name, logoUrl: req.body.logoUrl || null, affiliateUrl,
+    id: randomUUID(), name, kind, logoUrl: req.body.logoUrl || null,
   }).returning();
   res.status(201).json(created[0]);
 });
@@ -89,8 +106,8 @@ router.patch("/platforms/:platformId", async (req, res) => {
   if (!adminOrForbidden(req, res)) return;
   const updated = await db.update(vantrexPlatformsTable).set({
     ...(req.body.name !== undefined ? { name: String(req.body.name).trim() } : {}),
+    ...(req.body.kind !== undefined ? { kind: req.body.kind === "sports" ? "sports" : "casino" } : {}),
     ...(req.body.logoUrl !== undefined ? { logoUrl: req.body.logoUrl || null } : {}),
-    ...(req.body.affiliateUrl !== undefined ? { affiliateUrl: String(req.body.affiliateUrl).trim() } : {}),
   }).where(eq(vantrexPlatformsTable.id, req.params.platformId)).returning();
   if (!updated[0]) { res.status(404).json({ error: "Platform not found" }); return; }
   res.json(updated[0]);

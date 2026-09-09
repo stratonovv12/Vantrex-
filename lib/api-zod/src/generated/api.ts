@@ -23,8 +23,8 @@ export const HealthCheckResponse = zod.object({
 export const ListPlatformsResponseItem = zod.object({
   "id": zod.string(),
   "name": zod.string(),
+  "kind": zod.enum(['casino', 'sports']),
   "logoUrl": zod.string().nullable(),
-  "affiliateUrl": zod.string(),
   "createdAt": zod.string().optional()
 })
 export const ListPlatformsResponse = zod.array(ListPlatformsResponseItem)
@@ -36,18 +36,17 @@ export const ListPlatformsResponse = zod.array(ListPlatformsResponseItem)
 
 
 
-
 export const CreatePlatformBody = zod.object({
   "name": zod.string().min(1),
-  "logoUrl": zod.string().nullish(),
-  "affiliateUrl": zod.string().min(1)
+  "kind": zod.enum(['casino', 'sports']),
+  "logoUrl": zod.string().nullish()
 })
 
 export const CreatePlatformResponse = zod.object({
   "id": zod.string(),
   "name": zod.string(),
+  "kind": zod.enum(['casino', 'sports']),
   "logoUrl": zod.string().nullable(),
-  "affiliateUrl": zod.string(),
   "createdAt": zod.string().optional()
 })
 
@@ -62,18 +61,17 @@ export const UpdatePlatformParams = zod.object({
 
 
 
-
 export const UpdatePlatformBody = zod.object({
   "name": zod.string().min(1).optional(),
-  "logoUrl": zod.string().nullish(),
-  "affiliateUrl": zod.string().min(1).optional()
+  "kind": zod.enum(['casino', 'sports']).optional(),
+  "logoUrl": zod.string().nullish()
 })
 
 export const UpdatePlatformResponse = zod.object({
   "id": zod.string(),
   "name": zod.string(),
+  "kind": zod.enum(['casino', 'sports']),
   "logoUrl": zod.string().nullable(),
-  "affiliateUrl": zod.string(),
   "createdAt": zod.string().optional()
 })
 
@@ -193,7 +191,7 @@ export const GetProfileResponse = zod.object({
   "referralCount": zod.number().int(),
   "balance": zod.number(),
   "tier": zod.enum(['beginner', 'intermediate', 'top']),
-  "hourlyRate": zod.number().optional()
+  "hourlyRate": zod.number()
 })
 
 
@@ -222,7 +220,7 @@ export const UpdateProfileResponse = zod.object({
   "referralCount": zod.number().int(),
   "balance": zod.number(),
   "tier": zod.enum(['beginner', 'intermediate', 'top']),
-  "hourlyRate": zod.number().optional()
+  "hourlyRate": zod.number()
 })
 
 
@@ -254,7 +252,7 @@ export const GetDashboardResponse = zod.object({
   "referralCount": zod.number().int(),
   "balance": zod.number(),
   "tier": zod.enum(['beginner', 'intermediate', 'top']),
-  "hourlyRate": zod.number().optional()
+  "hourlyRate": zod.number()
 }),
   "nextTierAt": zod.number().int(),
   "referralsToNextTier": zod.number().int(),

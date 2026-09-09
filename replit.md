@@ -22,25 +22,27 @@ VANTREX is a monochrome iGaming showcase and affiliate cockpit with Clerk authen
 
 ## Where things live
 
-- `artifacts/vantrex/src/App.tsx` — authenticated player, onboarding, profile, and admin routes.
+- `artifacts/vantrex/src/App.tsx` — authenticated player, mandatory onboarding, showcase, profile, and admin routes.
 - `artifacts/vantrex/src/index.css` — monochrome VANTREX visual system and responsive layout.
-- `artifacts/api-server/src/routes/vantrex.ts` — authenticated platform, game, profile, and withdrawal endpoints.
+- `artifacts/api-server/src/routes/vantrex.ts` — authenticated platform, game, profile, referral, and withdrawal endpoints.
+- `artifacts/api-server/src/routes/storage.ts` — authenticated presigned upload URL and object serving endpoints.
 - `lib/api-spec/openapi.yaml` — source-of-truth API contract.
 - `lib/db/src/schema/vantrex.ts` — PostgreSQL schema for VANTREX records.
 
 ## Architecture decisions
 
 - Clerk is the authentication provider so Google OAuth and email/password flows are managed securely outside the app.
-- The catalogue starts empty by design; platforms and games are only created through the restricted admin surface.
-- Uploaded image previews use native file inputs and object URLs; persistent storage should be moved to App Storage before production image uploads.
+- The catalogue starts empty by design; platforms only contain category/logo identity and games own their direct affiliate destinations.
+- Native image inputs upload directly to App Storage through short-lived presigned URLs; PostgreSQL stores only the resulting object paths.
 - Affiliate destinations are stored server-side and only used as click targets from the Play now action.
 
 ## Product
 
 - Player landing page and Clerk sign-in/sign-up.
 - RU/EN onboarding with username availability and active platform selection.
-- Mobile-first dashboard with casino/sports tabs, referral tier progress, active hourly reward timer, and payout modal.
-- Profile editing with native avatar upload and referral code.
+- Mandatory onboarding blocks the showcase until a unique username and avatar are saved.
+- Mobile-first showcase with Casino/Sports Betting toggle, platform cards, platform-specific game/event lists, and game-owned Play links.
+- Profile editing with native avatar upload, language switching, referral link, live reward balance, tier progress, and payout modal.
 - Restricted admin CRUD for platforms and games/bets plus withdrawal status management.
 
 ## User preferences

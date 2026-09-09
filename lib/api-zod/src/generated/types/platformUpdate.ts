@@ -5,12 +5,12 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { PlatformUpdateKind } from './platformUpdateKind';
 
 export interface PlatformUpdate {
   /** @minLength 1 */
   name?: string;
+  kind?: PlatformUpdateKind;
   /** @nullable */
   logoUrl?: string | null;
-  /** @minLength 1 */
-  affiliateUrl?: string;
 }

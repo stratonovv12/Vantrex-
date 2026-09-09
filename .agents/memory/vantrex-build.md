@@ -14,3 +14,9 @@ Authentication is handled by the Replit-managed Clerk setup, with the operations
 **Why:** The app needs Google OAuth and email/password without introducing a local password store.
 
 **How to apply:** Keep browser auth cookie-based and protect API routes with Clerk middleware; do not add JWT/password implementations.
+
+User-uploaded images use App Storage object paths rather than browser object URLs or database blobs.
+
+**Why:** Browser object URLs disappear after refresh and storing image bytes in PostgreSQL is the wrong persistence boundary.
+
+**How to apply:** Request a presigned upload URL, upload the file directly, and persist only `/objects/...`-based serving paths in profile, platform, or game records.

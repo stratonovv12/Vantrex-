@@ -9,31 +9,53 @@ export interface HealthStatus {
   status: string;
 }
 
+export type PlatformKind = typeof PlatformKind[keyof typeof PlatformKind];
+
+
+export const PlatformKind = {
+  casino: 'casino',
+  sports: 'sports',
+} as const;
+
 export interface Platform {
   id: string;
   name: string;
+  kind: PlatformKind;
   /** @nullable */
   logoUrl: string | null;
-  affiliateUrl: string;
   createdAt?: string;
 }
+
+export type PlatformInputKind = typeof PlatformInputKind[keyof typeof PlatformInputKind];
+
+
+export const PlatformInputKind = {
+  casino: 'casino',
+  sports: 'sports',
+} as const;
 
 export interface PlatformInput {
   /** @minLength 1 */
   name: string;
+  kind: PlatformInputKind;
   /** @nullable */
   logoUrl?: string | null;
-  /** @minLength 1 */
-  affiliateUrl: string;
 }
+
+export type PlatformUpdateKind = typeof PlatformUpdateKind[keyof typeof PlatformUpdateKind];
+
+
+export const PlatformUpdateKind = {
+  casino: 'casino',
+  sports: 'sports',
+} as const;
 
 export interface PlatformUpdate {
   /** @minLength 1 */
   name?: string;
+  kind?: PlatformUpdateKind;
   /** @nullable */
   logoUrl?: string | null;
-  /** @minLength 1 */
-  affiliateUrl?: string;
 }
 
 export type GameKind = typeof GameKind[keyof typeof GameKind];
@@ -126,7 +148,7 @@ export interface Profile {
   referralCount: number;
   balance: number;
   tier: ProfileTier;
-  hourlyRate?: number;
+  hourlyRate: number;
 }
 
 export type ProfileUpdateLanguage = typeof ProfileUpdateLanguage[keyof typeof ProfileUpdateLanguage];
